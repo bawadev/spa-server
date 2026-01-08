@@ -1,0 +1,32 @@
+# Build stage
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /build
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spa-server ./cmd/spa-server
+
+# Production stage - Alpine variant (slightly larger but has shell)
+FROM alpine:3.19
+
+# Add non-root user
+RUN addgroup -g 1000 app && adduser -u 1000 -G app -s /bin/sh -D app
+
+# Copy binary
+COPY --from=builder /build/spa-server /usr/local/bin/spa-server
+
+WORKDIR /app
+
+# Change ownership
+RUN chown -R app:app /app
+
+EXPOSE 8080
+
+USER app
+
+ENTRYPOINT ["/usr/local/bin/spa-server"]
+CMD ["--directory", "/app"]
