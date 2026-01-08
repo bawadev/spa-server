@@ -6,15 +6,15 @@ WORKDIR /build
 # Install ca-certificates for HTTPS
 RUN apk add --no-cache ca-certificates
 
-# Copy go mod files first for better caching
-COPY go.mod go.sum ./
-RUN go mod download
+# Copy go mod file and download dependencies
+COPY go.mod ./
+RUN go mod download || true
 
 # Copy source code
 COPY . .
 
-# Build static binary
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spa-server ./cmd/spa-server
+# Generate go.sum and build
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o spa-server ./cmd/spa-server
 
 # Production stage - using distroless for minimal attack surface
 FROM gcr.io/distroless/static-debian12:nonroot
