@@ -28,8 +28,8 @@ vendor/
 Thumbs.db
 
 # Build output
-dist/
-build/
+/dist/
+/build/
 
 # Compressed test files
 *.gz
