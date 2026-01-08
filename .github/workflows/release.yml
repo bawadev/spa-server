@@ -24,6 +24,9 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Download dependencies
+        run: go mod tidy
+
       - name: Build binaries
         run: |
           VERSION=${{ steps.version.outputs.VERSION }}
