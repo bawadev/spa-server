@@ -1,5 +1,5 @@
-# Binaries
-spa-server
+# Binaries (at root level)
+/spa-server
 *.exe
 *.dll
 *.so
