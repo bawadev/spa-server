@@ -23,7 +23,8 @@ func SecurityHeaders(next http.Handler) http.Handler {
 		// Referrer policy
 		w.Header().Set("Referrer-Policy", "strict-origin-when-cross-origin")
 		// Permissions policy (formerly Feature-Policy)
-		w.Header().Set("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+		// Allow geolocation, microphone, camera for the site itself (self)
+		w.Header().Set("Permissions-Policy", "geolocation=(self), microphone=(self), camera=(self)")
 
 		next.ServeHTTP(w, r)
 	})
